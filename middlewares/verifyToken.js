@@ -1,12 +1,17 @@
 const jwt=require('jsonwebtoken');
 const createError=require('./error');
+require('dotenv').config();
+
 
 const verifyToken=(req,res,next)=>{
+    // console.log(req.cookies);
     const token=req.cookies.access_token;
+    
     if(!token) {
         return next(createError(401,'you are not authenticated'));
     };
     jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
+        console.log("user",user);
         if(err) return next(createError(403,"token is not valid"));
         req.user=user;
         next();
@@ -15,6 +20,7 @@ const verifyToken=(req,res,next)=>{
 }
 
 const verifyUser=(req,res,next)=>{
+   
     verifyToken(req,res,next,()=>{
        if(req.user.id==req.params.id || req.user.role=='admin'){
         next();

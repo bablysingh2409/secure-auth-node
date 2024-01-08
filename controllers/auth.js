@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const createError = require('../middlewares/error');
 const jwt=require('jsonwebtoken');
+require('dotenv').config();
 
 
 
@@ -50,6 +51,7 @@ const authentication = {
 
             res.cookie("access_token",token,{
                 httpOnly:true,
+                maxAge: 3600000
             }).status(200).json({...otherDetails});
         } catch (err) {
             next(err);

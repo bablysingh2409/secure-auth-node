@@ -1,10 +1,15 @@
 const express=require('express');
 const mongoose=require('mongoose');
 const auth=require('./routes/auth');
+const user=require('./routes/users');
+const cors=require('cors');
+const cookiparser=require('cookie-parser');
 
 const app=express();
 
+app.use(cors());
 app.use(express.json());
+app.use(cookiparser());
 
 mongoose.connect('mongodb://localhost:27017/secureAuthNode', { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => console.log('Connected to MongoDB'))
@@ -12,6 +17,7 @@ mongoose.connect('mongodb://localhost:27017/secureAuthNode', { useNewUrlParser: 
 
 
 app.use('/auth',auth);
+app.use('/user',user);
 
 
 app.use((err,req,res,next)=>{
