@@ -8,4 +8,3 @@ router.post('/signup',auth.signup);
 
 module.exports=router;
 
- 

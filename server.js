@@ -14,7 +14,16 @@ mongoose.connect('mongodb://localhost:27017/secureAuthNode', { useNewUrlParser: 
 app.use('/auth',auth);
 
 
-
+app.use((err,req,res,next)=>{
+    const errorStatus=err.status||500;
+    const errMsg=err.message|| "something went wrong";
+    return res.status(errorStatus).json({
+        success:false,
+        status:errorStatus,
+        message:errMsg,
+        stack:err.stack
+    })
+})
 
 
 app.listen(5800,()=>{
