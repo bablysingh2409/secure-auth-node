@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const createError=require('../middlewares/error')
+const createError = require('../middlewares/error')
 
 
 const authentication = {
@@ -23,6 +23,24 @@ const authentication = {
         catch (err) {
             next(err);
         }
+    },
+
+    login: async (req, res, next) => {
+        try {
+            const { email, phone} = req.body;
+            let user;
+            if (email) user =await User.findOne({email});
+            else  user =await User.findOne({phone});
+            if (!user) return next(createError(404, 'user not found'));
+
+            const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
+            if (!isPasswordCorrect) return next(createError(400, 'wrong password or email/phoneNo.'));
+            const {password,role,...otherDetails}=user._doc;
+
+            res.status(200).json({...otherDetails});
+        } catch (err) {
+            next(err);
+        }
     }
 }
-module.exports=authentication;
+module.exports = authentication;
