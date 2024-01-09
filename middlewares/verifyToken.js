@@ -12,6 +12,7 @@ const verifyToken=(req,res,next)=>{
     };
     jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
         if(err) return next(createError(403,"token is not valid"));
+        console.log(user)
         req.user=user;
         next();
     })
@@ -20,8 +21,9 @@ const verifyToken=(req,res,next)=>{
 
 const verifyUser=(req,res,next)=>{
    
-    verifyToken(req,res,next,()=>{
-       if(req.user.id==req.params.id || req.user.role=='admin'){
+    verifyToken(req,res,()=>{
+        console.log(req.params)
+       if(req.user.id==req.params.id || req.user.role=='admin'){  
         next();
        }
        else{
@@ -30,4 +32,17 @@ const verifyUser=(req,res,next)=>{
     })
 }
 
-module.exports={verifyUser};
+const verifyAdmin=(req,res,next)=>{
+       verifyToken(req,res,()=>{
+        if(req.user.role=='admin'){
+            next();
+        }
+        else{
+            return next(createError(403,"you are not authorized"));
+        }
+       })
+        
+    
+}
+
+module.exports={verifyUser,verifyAdmin};

@@ -2,6 +2,7 @@ const express=require('express');
 const mongoose=require('mongoose');
 const auth=require('./routes/auth');
 const user=require('./routes/users');
+const admin=require('./routes/admin');
 const cors=require('cors');
 const cookiparser=require('cookie-parser');
 
@@ -18,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/secureAuthNode', { useNewUrlParser: 
 
 app.use('/auth',auth);
 app.use('/user',user);
-
+app.use('/admin',admin);
 
 app.use((err,req,res,next)=>{
     const errorStatus=err.status||500;
@@ -30,7 +31,6 @@ app.use((err,req,res,next)=>{
         stack:err.stack
     })
 })
-
 
 app.listen(5800,()=>{
     console.log("server is running on port 5800");

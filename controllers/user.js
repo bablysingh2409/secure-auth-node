@@ -1,5 +1,7 @@
 const User = require('../models/User');
-const createError = require('../middlewares/error')
+const createError = require('../middlewares/error');
+const { findById } = require('../models/Admin');
+const mongoose = require('mongoose');
 
 
 const updateUser = async (req, res, next) => {
@@ -21,7 +23,7 @@ const updateUser = async (req, res, next) => {
         await user.save();
         res.status(200).send('your data is updated');
     } catch (err) {
-        next();
+        next(err);
     }
 }
 
@@ -33,8 +35,24 @@ const deleteUser=async (req,res,next)=>{
         await User.findByIdAndDelete(userId);
         res.status(200).send('your data is deleted');
     } catch (err) {
-        next();
+        next(err);
     }
 }
 
-module.exports = { updateUser,deleteUser };
+//get user
+const getUser=async(req,res,next)=>{
+    try{
+        // console.log('params is',req.params)
+        const userId=req.params.id;
+
+        const user=await User.findById(userId);
+        if(!user){
+            return next(createError(404, 'user not found'));
+        }
+        res.status(200).json(user);
+    }catch(err){
+        next(err);
+    }
+}
+
+module.exports = { updateUser,deleteUser,getUser };
