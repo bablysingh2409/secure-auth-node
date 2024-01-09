@@ -1,9 +1,8 @@
 const User = require('../models/User');
 const createError = require('../middlewares/error');
-const { findById } = require('../models/Admin');
-const mongoose = require('mongoose');
 
 
+//update user details but only name and profile image
 const updateUser = async (req, res, next) => {
     try {
         const userId = req.params.id;
@@ -21,12 +20,13 @@ const updateUser = async (req, res, next) => {
 
         //saving updated user
         await user.save();
-        res.status(200).send('your data is updated');
+        res.status(200).send(user);
     } catch (err) {
         next(err);
     }
 }
 
+//delete user
 const deleteUser=async (req,res,next)=>{
     try {
         const userId = req.params.id;
@@ -55,4 +55,19 @@ const getUser=async(req,res,next)=>{
     }
 }
 
-module.exports = { updateUser,deleteUser,getUser };
+//get all user data and it is only access by admin
+const getAllUserData=async(req,res,next)=>{
+    try{
+        const allUser=await User.find();
+        if(!allUser){
+            return next(createError(404,'users not found'));
+        }
+
+        res.status(200).json(allUser)
+
+    }catch(err){
+        next(err);
+    }
+}
+
+module.exports = { updateUser,deleteUser,getUser,getAllUserData };
